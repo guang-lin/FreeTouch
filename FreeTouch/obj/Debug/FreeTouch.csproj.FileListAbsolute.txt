@@ -1,0 +1,11 @@
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\bin\Debug\FreeTouch.exe.config
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\bin\Debug\FreeTouch.exe
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\bin\Debug\FreeTouch.pdb
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\obj\Debug\FreeTouch.csprojAssemblyReference.cache
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\obj\Debug\FreeTouch.Form1.resources
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\obj\Debug\FreeTouch.Properties.Resources.resources
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\obj\Debug\FreeTouch.SetPointForm.resources
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\obj\Debug\FreeTouch.csproj.GenerateResource.cache
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\obj\Debug\FreeTouch.csproj.CoreCompileInputs.cache
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\obj\Debug\FreeTouch.exe
+D:\Projects\Visual Studio 2017\source\repos\FreeTouch\FreeTouch\obj\Debug\FreeTouch.pdb
