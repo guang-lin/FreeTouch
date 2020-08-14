@@ -8,32 +8,24 @@ namespace FreeTouch
     class AdbProcess
     {
         private Process process;
-        private string adbFile = Properties.Resources.StrAdbFile;
+        private string adbFile = Properties.Resources.AdbFile;
         private int wait = 1000 * 10;
 
-        public bool Start()//启动adb
+        public bool Start() //启动adb
         {
-            try
+            if (process == null)
             {
-                if (process == null)
-                {
-                    process = new Process();
-                    process.StartInfo.FileName = adbFile;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardOutput = true;//重定向标准输出流
-                    process.StartInfo.RedirectStandardError = true;//重定向标准错误流
-                    process.StartInfo.CreateNoWindow = true;
-                    return process.Start();
-                }
-                else
-                {
-                    return true;
-                }
+                process = new Process();
+                process.StartInfo.FileName = adbFile;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true; //重定向标准输出流
+                process.StartInfo.RedirectStandardError = true; //重定向标准错误流
+                process.StartInfo.CreateNoWindow = true;
+                return process.Start();
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e.Message);
-                return false;
+                return true;
             }
         }
 
@@ -71,7 +63,7 @@ namespace FreeTouch
                 {
                     process.StartInfo.Arguments = cmd;
                     process.Start();
-                    output = process.StandardOutput.ReadToEnd();//获取输出信息
+                    output = process.StandardOutput.ReadToEnd(); //获取输出信息
                     process.WaitForExit(wait);
                     Thread.Sleep(delay);
                     return output;
@@ -88,7 +80,7 @@ namespace FreeTouch
             }
         }
 
-        public void Close()//关闭adb
+        public void Close() //关闭adb
         {
             foreach (Process p in Process.GetProcesses())
             {

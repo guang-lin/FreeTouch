@@ -6,7 +6,7 @@ namespace FreeTouch
 {
     public class Compress
     {
-        /// 压缩图片类
+        /// 该类用于压缩图片
         /// </summary>
         /// <param name="sFile">原图片地址</param>
         /// <param name="dFile">压缩后保存图片地址</param>
@@ -63,7 +63,7 @@ namespace FreeTouch
 
             EncoderParameters ep = new EncoderParameters();
             long[] qy = new long[1];
-            qy[0] = flag;//设置压缩率
+            qy[0] = flag; //设置压缩率
             EncoderParameter eParam = new EncoderParameter(Encoder.Quality, qy);
             ep.Param[0] = eParam;
             try
@@ -80,7 +80,7 @@ namespace FreeTouch
                 }
                 if (jpegICIinfo != null)
                 {
-                    ob.Save(dFile, jpegICIinfo, ep);//dFile为压缩图片保存路径
+                    ob.Save(dFile, jpegICIinfo, ep); //dFile为压缩图片的保存路径
                     FileInfo fi = new FileInfo(dFile);
                     if (fi.Length > 1024 * size)
                     {

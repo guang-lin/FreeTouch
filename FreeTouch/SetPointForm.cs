@@ -24,7 +24,7 @@ namespace FreeTouch
         private void SetPointForm_Load(object sender, EventArgs e)
         {
             form1.Cursor = Cursors.WaitCursor;
-            resolution = touch.GetResolution();//获取屏幕分辨率
+            resolution = touch.GetResolution(); //获取屏幕分辨率
             if (resolution[0] != 0)
             {
                 ratio = 1;
@@ -38,7 +38,7 @@ namespace FreeTouch
                 this.Height = pictureBox1.Height + 50;
                 this.Width = pictureBox1.Width + groupBox1.Width + 50;
                 pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
-                label7.Text = "";
+                label3.Text = "";
                 RefreshScreenshot();
                 DrawSymbol();
                 if (x != -1)
@@ -51,8 +51,8 @@ namespace FreeTouch
             else
             {
                 form1.Cursor = Cursors.Default;
-                MessageBox.Show("出现错误！未能正确连接手机", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.Close();
+                MessageBox.Show("未能正确连接手机！", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                form1.Close();
                 return;
             }
         }
@@ -63,55 +63,13 @@ namespace FreeTouch
             this.y = y / ratio;
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void button1_Click(object sender, EventArgs e)//确定
-        {
-            if (textBox1.Text.Trim().Length != 0 && textBox2.Text.Trim().Length != 0)
-            {
-                if (form1.ColIndex == 1 || form1.ColIndex == 2)
-                {
-                    form1.dataGridView1.Rows[form1.RowIndex].Cells[1].Value = textBox1.Text.Trim();
-                    form1.dataGridView1.Rows[form1.RowIndex].Cells[2].Value = textBox2.Text.Trim();
-                }
-                if (form1.ColIndex == 3 || form1.ColIndex == 4)
-                {
-                    form1.dataGridView1.Rows[form1.RowIndex].Cells[3].Value = textBox1.Text.Trim();
-                    form1.dataGridView1.Rows[form1.RowIndex].Cells[4].Value = textBox2.Text.Trim();
-                }
-                this.Close();
-            }
-        }
-
         private void RefreshScreenshot()
         {
             if (pictureBox1.BackgroundImage != null)
             {
-                pictureBox1.BackgroundImage.Dispose();//释放资源
+                pictureBox1.BackgroundImage.Dispose(); //释放资源
             }
             pictureBox1.BackgroundImage = touch.GetScreenshot();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            form1.Cursor = Cursors.WaitCursor;
-            label7.Text = "加载中•••";
-            RefreshScreenshot();
-            form1.Cursor = Cursors.Default;
-            label7.Text = "加载完成";
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            Point point = pictureBox1.PointToClient(Control.MousePosition);
-            x = point.X;
-            y = point.Y;
-            DrawSymbol();
-            textBox1.Text = (x * ratio).ToString();
-            textBox2.Text = (y * ratio).ToString();
         }
 
         private void DrawSymbol()
@@ -135,6 +93,48 @@ namespace FreeTouch
             pictureBox1.Image = null;
         }
 
+        private void button1_Click(object sender, EventArgs e) //确定
+        {
+            if (textBox1.Text.Trim().Length != 0 && textBox2.Text.Trim().Length != 0)
+            {
+                if (form1.ColIndex == Table.X1 || form1.ColIndex == Table.Y1)
+                {
+                    form1.dataGridView1.Rows[form1.RowIndex].Cells[1].Value = textBox1.Text.Trim();
+                    form1.dataGridView1.Rows[form1.RowIndex].Cells[2].Value = textBox2.Text.Trim();
+                }
+                if (form1.ColIndex == Table.X2 || form1.ColIndex == Table.Y2)
+                {
+                    form1.dataGridView1.Rows[form1.RowIndex].Cells[3].Value = textBox1.Text.Trim();
+                    form1.dataGridView1.Rows[form1.RowIndex].Cells[4].Value = textBox2.Text.Trim();
+                }
+                this.Close();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e) //刷新
+        {
+            this.Cursor = Cursors.WaitCursor;
+            label3.Text = "加载中•••";
+            RefreshScreenshot();
+            this.Cursor = Cursors.Default;
+            label3.Text = "加载完成";
+        }
+
+        private void button3_Click(object sender, EventArgs e) //取消
+        {
+            this.Close();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            Point point = pictureBox1.PointToClient(Control.MousePosition);
+            x = point.X;
+            y = point.Y;
+            DrawSymbol();
+            textBox1.Text = (x * ratio).ToString();
+            textBox2.Text = (y * ratio).ToString();
+        }
+
         private void textBox1_Leave(object sender, EventArgs e)
         {
             if (textBox1.Text.Trim().Length != 0)
@@ -145,19 +145,19 @@ namespace FreeTouch
                     {
                         if (Convert.ToInt16(textBox1.Text.Trim()) < 0 || Convert.ToInt16(textBox1.Text.Trim()) > resolution[0])
                         {
-                            MessageBox.Show("输入的数值范围无效！有效范围：0 - " + resolution[0], "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            MessageBox.Show("有效范围：0 - " + resolution[0], "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             textBox1.Text = "";
                         }
                     }
                     catch (OverflowException)
                     {
-                        MessageBox.Show("输入的数值范围无效！有效范围：0 - " + resolution[0], "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show("有效范围：0 - " + resolution[0], "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         textBox1.Text = "";
                     }
                 }
                 else
                 {
-                    MessageBox.Show("输入的数值格式有误！应输入整数值", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("请输入整数！", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     textBox1.Text = "";
                 }
             }
@@ -188,19 +188,19 @@ namespace FreeTouch
                     {
                         if (Convert.ToInt16(textBox2.Text.Trim()) < 0 || Convert.ToInt16(textBox2.Text.Trim()) > resolution[1])
                         {
-                            MessageBox.Show("输入的数值范围无效！有效范围：0 - " + resolution[1], "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            MessageBox.Show("有效范围：0 - " + resolution[1], "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             textBox2.Text = "";
                         }
                     }
                     catch (OverflowException)
                     {
-                        MessageBox.Show("输入的数值范围无效！有效范围：0 - " + resolution[1], "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show("有效范围：0 - " + resolution[1], "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         textBox2.Text = "";
                     }
                 }
                 else
                 {
-                    MessageBox.Show("输入的数值格式有误！应输入整数值", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("请输入整数！", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     textBox2.Text = "";
                 }
             }

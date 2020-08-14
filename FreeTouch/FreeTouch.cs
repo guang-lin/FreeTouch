@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -9,14 +10,13 @@ namespace FreeTouch
     {
         private Form1 form1;
         private delegate void ControlDelegate();
-        private int x1 = 0, y1 = 0;//触摸点或划动起始点
-        private int x2 = 0, y2 = 0;//划动终点
-        private int duration = 100;//划动用时
+        private int x1 = 0, y1 = 0; //触摸点或划动起始点
+        private int x2 = 0, y2 = 0; //划动终点
+        private int duration = 100; //划动用时
         private string keyCode = "";
-        private int delay = 0;//等待执行下一条命令的时长
+        private int delay = 0; //等待执行下一条命令的时长
         private AdbProcess adb;
         private string command = "";
-
         private const int CLICK = 0;
         private const int SWIPE = 1;
         private const int KEYEVENT = 2;
@@ -45,7 +45,7 @@ namespace FreeTouch
             this.duration = duration;
         }
 
-        private void Touch(int mode)//该函数每被调用一次，则执行一条指令
+        private void Touch(int mode) //该函数每被调用一次，则执行一条指令
         {
             switch (mode)
             {
@@ -86,15 +86,15 @@ namespace FreeTouch
             }
         }
 
-        public bool Run(string[,] strCommand, int codeRows, int loop = 1)
+        public bool Run(ArrayList cmd, int cmdRows, int loop = 1)
         {
             string countInfo = "";
             IsRun = true;
-            adb.Start();//启动adb程序
+            adb.Start(); //启动adb程序
 
             for (int i = 0; i < loop; i++)
             {
-                for (int j = 0; j < codeRows; j++)
+                for (int j = 0; j < cmdRows; j++)
                 {
                     if (!IsRun)
                     {
@@ -102,40 +102,107 @@ namespace FreeTouch
                     }
                     else
                     {
+                        if (form1.dataGridView1.IsHandleCreated)
+                        {
+                            form1.dataGridView1.Invoke((ControlDelegate)delegate
+                            {
+                                form1.dataGridView1.Rows[j].DefaultCellStyle.BackColor = Color.LightGreen;
+                            });
+                        }
                         try
                         {
-                            delay = Convert.ToInt16(Convert.ToDouble(strCommand[j, 8]) * 1000);
-                            switch (strCommand[j, 0])
+                            string[] oneRow = (string[])cmd[j];
+                            delay = Convert.ToInt16(Convert.ToDouble(oneRow[Table.WAIT]) * 1000);
+                            switch (oneRow[Table.EVENT])
                             {
                                 case "点击":
-                                    SetClickPoint(Convert.ToInt16(strCommand[j, 1]), Convert.ToInt16(strCommand[j, 2]));
+                                    if (oneRow[Table.TEXT].Length != 0)
+                                    {
+                                        Util util = new Util();
+                                        PullWindowDump();
+                                        if (File.Exists(Properties.Resources.WindowDumpFile))
+                                        {
+                                            string xml = util.ReadTextFile(Properties.Resources.WindowDumpFile);
+                                            int[] position = util.GetPositionFromXml(xml, oneRow[Table.TEXT]);
+
+                                            if (position[0] != -1)
+                                            {
+                                                if (oneRow[Table.X1].Length != 0)
+                                                {
+                                                    if (oneRow[Table.X1][0] == '+' || oneRow[Table.X1][0] == '-')
+                                                    {
+                                                        SetClickPoint(position[0] + Convert.ToInt16(oneRow[Table.X1]), position[1] + Convert.ToInt16(oneRow[Table.Y1]));
+                                                    }
+                                                    else
+                                                    {
+                                                        SetClickPoint(position[0], position[1]);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    SetClickPoint(position[0], position[1]);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("未能定位到指定控件，已停止运行", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                                if (form1.dataGridView1.IsHandleCreated)
+                                                {
+                                                    form1.dataGridView1.Invoke((ControlDelegate)delegate
+                                                    {
+                                                        form1.dataGridView1.Rows[j].DefaultCellStyle.BackColor = Color.White;
+                                                    });
+                                                }
+                                                IsRun = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        SetClickPoint(Convert.ToInt16(oneRow[Table.X1]), Convert.ToInt16(oneRow[Table.Y1]));
+                                    }
                                     Touch(FreeTouch.CLICK);
                                     break;
                                 case "划动":
-                                    SetSwipePoint(Convert.ToInt16(strCommand[j, 1]), Convert.ToInt16(strCommand[j, 2]), Convert.ToInt16(strCommand[j, 3]), Convert.ToInt16(strCommand[j, 4]), (int)Convert.ToDouble(strCommand[j, 5]));
+                                    SetSwipePoint(Convert.ToInt16(oneRow[Table.X1]), Convert.ToInt16(oneRow[Table.Y1]), Convert.ToInt16(oneRow[Table.X2]), Convert.ToInt16(oneRow[Table.Y2]), (int)Convert.ToDouble(oneRow[Table.TIME]));
                                     Touch(FreeTouch.SWIPE);
                                     break;
                                 case "按键":
-                                    keyCode = strCommand[j, 6];
+                                    keyCode = "KEYCODE_" + oneRow[Table.KEY_CODE];
                                     Touch(FreeTouch.KEYEVENT);
                                     break;
                                 case "指令":
-                                    command = strCommand[j, 7].Trim();
+                                    command = oneRow[Table.COMMAND].Trim();
                                     Touch(FreeTouch.COMMAND);
                                     break;
                                 default:
                                     break;
                             }
+                            if (form1.dataGridView1.IsHandleCreated)
+                            {
+                                form1.dataGridView1.Invoke((ControlDelegate)delegate
+                                {
+                                    form1.dataGridView1.Rows[j].DefaultCellStyle.BackColor = Color.White;
+                                });
+                            }
                         }
                         catch (Exception)
                         {
-                            MessageBox.Show("请检查输入的参数是否有误！", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            MessageBox.Show("请检查参数是否存在错误！", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            if (form1.dataGridView1.IsHandleCreated)
+                            {
+                                form1.dataGridView1.Invoke((ControlDelegate)delegate
+                                {
+                                    form1.dataGridView1.Rows[j].DefaultCellStyle.BackColor = Color.White;
+                                });
+                            }
                             return false;
                         }
                     }
 
                     int count = loop - i - 1;
-                    if (count == 0)
+                    if (count <= 0)
                     {
                         countInfo = "";
                     }
@@ -163,19 +230,19 @@ namespace FreeTouch
 
         public Image GetScreenshot()
         {
-            if (File.Exists(@"data\compressed.jpg"))
+            if (File.Exists(Properties.Resources.ToolsDirectory + "\\compressed.png"))
             {
-                File.Delete(@"data\compressed.jpg");
+                File.Delete(Properties.Resources.ToolsDirectory + "\\compressed.png");
             }
             adb.Start();
-            //截屏
-            adb.Execute("shell screencap -p /mnt/sdcard/screenshot.jpg", 20);
-            if (!Directory.Exists(@"data\"))
+            // 截屏
+            adb.Execute("shell screencap -p /mnt/sdcard/screenshot.png", 50);
+            if (!Directory.Exists(Properties.Resources.ToolsDirectory + "\\"))
             {
-                Directory.CreateDirectory(@"data\");
+                Directory.CreateDirectory(Properties.Resources.ToolsDirectory + "\\");
             }
             int i = 0;
-            while (!File.Exists(@"data\screenshot.jpg"))
+            while (!File.Exists(Properties.Resources.ToolsDirectory + "\\screenshot.png"))
             {
                 if (i > 5)
                 {
@@ -184,18 +251,22 @@ namespace FreeTouch
                 else
                 {
                     //将截图拉到电脑
-                    adb.Execute(@"pull /mnt/sdcard/screenshot.jpg data\", 20);
+                    adb.Execute(@"pull /mnt/sdcard/screenshot.png " + Properties.Resources.ToolsDirectory, 50);
                     i++;
                 }
             }
-            adb.Execute("shell rm /mnt/sdcard/screenshot.jpg", 10);
-            if (File.Exists(@"data\screenshot.jpg"))
+            adb.Execute("shell rm /mnt/sdcard/screenshot.png", 20);
+            if (File.Exists(Properties.Resources.ToolsDirectory + "\\screenshot.png"))
             {
-                Compress.CompressImage(@"data\screenshot.jpg", @"data\compressed.jpg");
-                File.Delete(@"data\screenshot.jpg");
-                Image image = Image.FromFile(@"data\compressed.jpg");
+                Compress.CompressImage(Properties.Resources.ToolsDirectory + "\\screenshot.png", Properties.Resources.ToolsDirectory + "\\compressed.png");
+                File.Delete(Properties.Resources.ToolsDirectory + "\\screenshot.png");
+                Image image = Image.FromFile(Properties.Resources.ToolsDirectory + "\\compressed.png");
                 Image newImage = new Bitmap(image);
                 image.Dispose();
+                if (File.Exists(Properties.Resources.ToolsDirectory + "\\compressed.png"))
+                {
+                    File.Delete(Properties.Resources.ToolsDirectory + "\\compressed.png");
+                }
                 return newImage;
             }
             else
@@ -221,6 +292,30 @@ namespace FreeTouch
                 size[1] = Convert.ToInt16(t[1]);
             }
             return size;
+        }
+
+        public void PullWindowDump()
+        {
+            adb.Start();
+            adb.Execute("shell uiautomator dump /mnt/sdcard/window_dump.xml", 50);
+            if (!Directory.Exists(Properties.Resources.ToolsDirectory + "\\"))
+            {
+                Directory.CreateDirectory(Properties.Resources.ToolsDirectory);
+            }
+            int k = 0;
+            while (!File.Exists(Properties.Resources.WindowDumpFile))
+            {
+                if (k > 5)
+                {
+                    break;
+                }
+                else
+                {
+                    adb.Execute(@"pull /mnt/sdcard/window_dump.xml " + Properties.Resources.ToolsDirectory + "\\", 50);
+                    k++;
+                }
+            }
+            adb.Execute("shell rm /mnt/sdcard/window_dump.xml", 20);
         }
     }
 }

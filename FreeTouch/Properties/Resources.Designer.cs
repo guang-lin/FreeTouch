@@ -61,47 +61,74 @@ namespace FreeTouch.Properties {
         }
         
         /// <summary>
-        ///   查找类似 platform-tools\adb.exe 的本地化字符串。
+        ///   查找类似 tools\platform-tools_r29.0.5-windows\platform-tools\adb.exe 的本地化字符串。
         /// </summary>
-        internal static string StrAdbFile {
+        internal static string AdbFile {
             get {
-                return ResourceManager.GetString("StrAdbFile", resourceCulture);
+                return ResourceManager.GetString("AdbFile", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 本程序基于adb(安卓调试桥)实现，可以辅助完成安卓手机 的本地化字符串。
+        ///   查找类似 这是一个基于 Android 调试桥实现的，可以辅助完成 的本地化字符串。
         /// </summary>
-        internal static string StrCommentPart1 {
+        internal static string CommentPart1 {
             get {
-                return ResourceManager.GetString("StrCommentPart1", resourceCulture);
+                return ResourceManager.GetString("CommentPart1", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 上的特殊操作 的本地化字符串。
+        ///   查找类似 安卓手机上特殊操作的程序 的本地化字符串。
         /// </summary>
-        internal static string StrCommentPart2 {
+        internal static string CommentPart2 {
             get {
-                return ResourceManager.GetString("StrCommentPart2", resourceCulture);
+                return ResourceManager.GetString("CommentPart2", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 Copyright (C) 2020 Li Guanglin.All Rights Reserved. 的本地化字符串。
+        ///   查找类似 Copyright (C) 2020 Li Guanglin 的本地化字符串。
         /// </summary>
-        internal static string StrCopyright {
+        internal static string Copyright {
             get {
-                return ResourceManager.GetString("StrCopyright", resourceCulture);
+                return ResourceManager.GetString("Copyright", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 版本 1.4.5 的本地化字符串。
+        ///   查找类似 tools\platform-tools_r29.0.5-windows.zip 的本地化字符串。
         /// </summary>
-        internal static string StrVersion {
+        internal static string PlatformToolsPackage {
             get {
-                return ResourceManager.GetString("StrVersion", resourceCulture);
+                return ResourceManager.GetString("PlatformToolsPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 tools 的本地化字符串。
+        /// </summary>
+        internal static string ToolsDirectory {
+            get {
+                return ResourceManager.GetString("ToolsDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 版本 1.6.2 的本地化字符串。
+        /// </summary>
+        internal static string Version {
+            get {
+                return ResourceManager.GetString("Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 tools\window_dump.xml 的本地化字符串。
+        /// </summary>
+        internal static string WindowDumpFile {
+            get {
+                return ResourceManager.GetString("WindowDumpFile", resourceCulture);
             }
         }
     }

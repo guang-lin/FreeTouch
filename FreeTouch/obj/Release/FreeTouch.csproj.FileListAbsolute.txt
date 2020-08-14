@@ -1,0 +1,12 @@
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\bin\Release\FreeTouch.exe.config
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\bin\Release\FreeTouch.exe
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\bin\Release\FreeTouch.pdb
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.ControlsLocateForm.resources
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.Form1.resources
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.Properties.Resources.resources
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.SetPointForm.resources
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.csproj.GenerateResource.cache
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.csproj.CoreCompileInputs.cache
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.exe
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.pdb
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.csprojAssemblyReference.cache

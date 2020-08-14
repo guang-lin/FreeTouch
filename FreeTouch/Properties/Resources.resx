@@ -117,24 +117,36 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="StrAdbFile" xml:space="preserve">
-    <value>platform-tools\adb.exe</value>
-    <comment>adbFile</comment>
+  <data name="AdbFile" xml:space="preserve">
+    <value>tools\platform-tools_r29.0.5-windows\platform-tools\adb.exe</value>
+    <comment>adb file</comment>
   </data>
-  <data name="StrCommentPart1" xml:space="preserve">
-    <value>本程序基于adb(安卓调试桥)实现，可以辅助完成安卓手机</value>
-    <comment>CommentPart1</comment>
+  <data name="CommentPart1" xml:space="preserve">
+    <value>这是一个基于 Android 调试桥实现的，可以辅助完成</value>
+    <comment>comment part1</comment>
   </data>
-  <data name="StrCommentPart2" xml:space="preserve">
-    <value>上的特殊操作</value>
-    <comment>CommentPart2</comment>
+  <data name="CommentPart2" xml:space="preserve">
+    <value>安卓手机上特殊操作的程序</value>
+    <comment>comment part2</comment>
   </data>
-  <data name="StrCopyright" xml:space="preserve">
-    <value>Copyright (C) 2020 Li Guanglin.All Rights Reserved.</value>
-    <comment>Copyright</comment>
+  <data name="Copyright" xml:space="preserve">
+    <value>Copyright (C) 2020 Li Guanglin</value>
+    <comment>copyright</comment>
   </data>
-  <data name="StrVersion" xml:space="preserve">
-    <value>版本 1.4.5</value>
-    <comment>Version</comment>
+  <data name="PlatformToolsPackage" xml:space="preserve">
+    <value>tools\platform-tools_r29.0.5-windows.zip</value>
+    <comment>platform tools package</comment>
+  </data>
+  <data name="ToolsDirectory" xml:space="preserve">
+    <value>tools</value>
+    <comment>tools directory</comment>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>版本 1.6.2</value>
+    <comment>version</comment>
+  </data>
+  <data name="WindowDumpFile" xml:space="preserve">
+    <value>tools\window_dump.xml</value>
+    <comment>window dump file</comment>
   </data>
 </root>

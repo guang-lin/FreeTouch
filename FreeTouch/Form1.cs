@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Drawing;
+using System.Collections;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -9,12 +9,10 @@ namespace FreeTouch
 {
     public partial class Form1 : Form
     {
+        AdbProcess adb = new AdbProcess();
         private FreeTouch touch;
         private delegate void ControlDelegate();
-        private int ROWS = 50;
-        private const int COLS = 9;
         private bool isFirstRun = true;
-        private bool isLoadFinished = false;
         public int RowIndex { get; private set; } = 0;
         public int ColIndex { get; private set; } = 0;
 
@@ -27,28 +25,33 @@ namespace FreeTouch
         {
             int with = 0;
             touch = new FreeTouch(this);
-            dataGridView1.Rows.Add(ROWS);
-
-            for (int i = 0; i < ROWS; i++)
-            {
-                for (int j = 0; j < COLS; j++)
-                {
-                    dataGridView1.Rows[i].Cells[j].Value = "";
-                }
-                dataGridView1.Rows[i].Cells[5].Value = "200";
-                dataGridView1.Rows[i].Cells[COLS - 1].Value = "0.5";
-                dataGridView1.Rows[i].HeaderCell.Value = (i + 1).ToString();
-            }
+            dataGridView1.Rows.Add(Table.ROW_COUNT);
             //调整控件宽度
-            for (int i = 0; i < COLS; i++)
+            for (int i = 0; i < Table.COLUMN_COUNT; i++)
             {
                 with += dataGridView1.Columns[i].Width;
             }
             dataGridView1.Width = with + dataGridView1.RowHeadersWidth + 10;
-            this.Width = dataGridView1.Width + 13;
-
+            Width = dataGridView1.Width + 13;
             label1.Text = "";
-            isLoadFinished = true;
+
+            if (!File.Exists(Properties.Resources.AdbFile))
+            {
+                if(File.Exists(Properties.Resources.PlatformToolsPackage))
+                {
+                    string package = Properties.Resources.PlatformToolsPackage;
+                    string toolsDirectory = Properties.Resources.ToolsDirectory;
+                    int startIndex = package.LastIndexOf('\\') + 1;
+                    Zip.Extract(package, toolsDirectory + "\\" + package.Substring(startIndex, package.LastIndexOf('.') - startIndex + 1));
+                    File.Delete(Properties.Resources.PlatformToolsPackage);
+                }
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            touch.IsRun = false;
+            touch.Close();
         }
 
         public FreeTouch GetFreeTouch()
@@ -58,78 +61,13 @@ namespace FreeTouch
 
         private void Execute()
         {
-            string[,] cmdRows = new string[ROWS, COLS];
             int loop = 1;
-            int codeRows = 0;
+            Parse parse = new Parse();
+            ArrayList cmd = parse.GetArray(dataGridView1);
 
             if (textBox1.Text.Trim().Length != 0)
             {
                 loop = Convert.ToInt16(textBox1.Text);
-            }
-            else
-            {
-                loop = 1;
-            }
-
-            for (int i = 0; i < ROWS; i++)//获取指令字符串数组
-            {
-                if (dataGridView1.Rows[i].Cells[0].Value.ToString().Trim().Length != 0)
-                {
-                    for (int j = 0; j < COLS; j++)
-                    {
-                        if (dataGridView1.Rows[i].Cells[j].Value != null)
-                        {
-                            if (dataGridView1.Rows[i].Cells[j].Value.ToString().Trim().Length == 0)
-                            {
-                                if (j == 5)
-                                {
-                                    cmdRows[i, j] = "100";
-                                }
-                                else
-                                if (j == 8)
-                                {
-                                    cmdRows[i, j] = "0";
-                                }
-                                else
-                                {
-                                    cmdRows[i, j] = "";
-                                }
-                            }
-                            else
-                            {
-                                if (j == 6)
-                                {
-                                    cmdRows[i, j] = "KEYCODE_" + dataGridView1.Rows[i].Cells[j].Value.ToString();
-                                }
-                                else
-                                {
-                                    cmdRows[i, j] = dataGridView1.Rows[i].Cells[j].Value.ToString().Trim();
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (j == 5)
-                            {
-                                cmdRows[i, j] = "100";
-                            }
-                            else
-                            if (j == 8)
-                            {
-                                cmdRows[i, j] = "0";
-                            }
-                            else
-                            {
-                                cmdRows[i, j] = "";
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    codeRows = i;
-                    break;
-                }
             }
 
             try
@@ -139,7 +77,6 @@ namespace FreeTouch
                     button1.Invoke((ControlDelegate)delegate
                     {
                         button1.Text = "停止";
-                        label1.ForeColor = Color.Red;
                         if (isFirstRun)
                         {
                             label1.Text = "正在初始化";
@@ -160,7 +97,6 @@ namespace FreeTouch
                         {
                             button1.Invoke((ControlDelegate)delegate
                             {
-                                label1.ForeColor = Color.Red;
                                 label1.Text = "正在运行";
                             });
                         }
@@ -171,7 +107,6 @@ namespace FreeTouch
                         {
                             button1.Invoke((ControlDelegate)delegate
                             {
-                                label1.ForeColor = Color.Red;
                                 label1.Text = "连接失败！";
                                 button1.Text = "运行";
                             });
@@ -179,26 +114,47 @@ namespace FreeTouch
                         return;
                     }
                 }
-
-                touch.Run(cmdRows, codeRows, loop);//运行
+                touch.Run(cmd, cmd.Count, loop); //运行
 
                 if (label1.IsHandleCreated)
                 {
                     label1.Invoke((ControlDelegate)delegate
                     {
-                        label1.ForeColor = Color.Red;
                         label1.Text = "运行结束";
                         button1.Text = "运行";
                     });
                 }
             }
-            catch(System.ComponentModel.InvalidAsynchronousStateException e)
+            catch (System.ComponentModel.InvalidAsynchronousStateException e)
             {
                 Console.WriteLine(e.Message);
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)//运行
+        private string GetCellValue(int row, int col)
+        {
+            if (dataGridView1.Rows[row].Cells[col].Value == null)
+            {
+                return "";
+            }
+            else
+            {
+                return dataGridView1.Rows[row].Cells[col].Value.ToString();
+            }
+        }
+
+        private void ClearDataGridView(DataGridView dataGridView) //清空
+        {
+            for (int i = 0; i < dataGridView.RowCount; i++)
+            {
+                for (int j = 0; j < dataGridView.ColumnCount; j++)
+                {
+                    dataGridView.Rows[i].Cells[j].Value = "";
+                }
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e) //运行
         {
             if (dataGridView1.Rows[0].Cells[0].Value.ToString().Trim().Length == 0)
             {
@@ -208,7 +164,7 @@ namespace FreeTouch
             if (button1.Text == "运行")
             {
                 ThreadStart threadStart = new ThreadStart(Execute);
-                Thread thread = new Thread(threadStart);//创建线程
+                Thread thread = new Thread(threadStart);
                 thread.Start();
             }
             else
@@ -218,23 +174,41 @@ namespace FreeTouch
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e) //关于
         {
-            for (int i = 0; i < ROWS; i++)
-            {
-                for (int j = 0; j < COLS; j++)
-                {
-                    dataGridView1.Rows[i].Cells[j].Value = "";
-                }
-            }
+            string info = "  " + Properties.Resources.CommentPart1 + "\n  " + Properties.Resources.CommentPart2 + "\n\n  " +
+                Properties.Resources.Version + "\n  " +
+                Properties.Resources.Copyright;
+            MessageBox.Show(info, "关于", MessageBoxButtons.OK, MessageBoxIcon.None);
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e) //读取脚本
         {
-            string info = "  " + Properties.Resources.StrCommentPart1 + "\n  " + Properties.Resources.StrCommentPart2 + "\n\n  " +
-                Properties.Resources.StrVersion + "\n  " +
-                Properties.Resources.StrCopyright;
-            MessageBox.Show(info, "关于", MessageBoxButtons.OK, MessageBoxIcon.None);
+            ScriptFileDialog fileDialog = new ScriptFileDialog();
+            Parse parse = new Parse();
+            string script = fileDialog.ReadScript();
+
+            if (script.Length == 0)
+            {
+                return;
+            }
+            ArrayList cmd = parse.ParseToArray(script, Table.COLUMN_COUNT);
+            ClearDataGridView(dataGridView1);
+            parse.SetArray(cmd, dataGridView1);
+        }
+
+        private void button5_Click(object sender, EventArgs e) //保存脚本
+        {
+            ScriptFileDialog fileDialog = new ScriptFileDialog();
+            Parse parse = new Parse();
+            string script = parse.ParseToScript(parse.GetArray(dataGridView1));
+
+            if (!Directory.Exists(@"data\"))
+            {
+                Directory.CreateDirectory(@"data\");
+            }
+
+            fileDialog.SaveScript(script);
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -244,13 +218,13 @@ namespace FreeTouch
 
             if (RowIndex > -1)
             {
-                if (ColIndex > 0 && ColIndex < 3)
+                if (ColIndex > Table.EVENT && ColIndex < Table.X2)
                 {
-                    SetPointForm pointForm = new SetPointForm(this);//屏幕位置选择窗体对象
+                    SetPointForm pointForm = new SetPointForm(this); //创建用于选取手机屏幕坐标的窗体对象
                     try
                     {
-                        int x = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[1].Value);
-                        int y = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[2].Value);
+                        int x = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[Table.X1].Value);
+                        int y = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[Table.Y1].Value);
                         pointForm.SetCurrentPoint(x, y);
                         pointForm.ShowDialog();
                     }
@@ -260,13 +234,13 @@ namespace FreeTouch
                     }
                 }
                 else
-                if (ColIndex > 2 && ColIndex < 5)
+                if (ColIndex > Table.Y1 && ColIndex < Table.TEXT)
                 {
                     SetPointForm pointForm = new SetPointForm(this);
                     try
                     {
-                        int x = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[3].Value);
-                        int y = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[4].Value);
+                        int x = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[Table.X2].Value);
+                        int y = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[Table.Y2].Value);
                         pointForm.SetCurrentPoint(x, y);
                         pointForm.ShowDialog();
                     }
@@ -275,18 +249,32 @@ namespace FreeTouch
                         pointForm.ShowDialog();
                     }
                 }
+                else
+                if (ColIndex == Table.TEXT)
+                {
+                    ControlsLocateForm locateForm = new ControlsLocateForm(this);
+                    try
+                    {
+                        if (dataGridView1.Rows[RowIndex].Cells[Table.X1].Value.ToString().Length != 0)
+                        {
+                            char sign = dataGridView1.Rows[RowIndex].Cells[Table.X1].Value.ToString()[0];
+                            if (sign == '+' || sign == '-')
+                            {
+                                int x = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[Table.X1].Value);
+                                int y = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[Table.Y1].Value);
+                                locateForm.SetOffset(x, y);
+                            }
+                        }
+                        locateForm.SetControlText(dataGridView1.Rows[RowIndex].Cells[Table.TEXT].Value.ToString());
+                        locateForm.ShowDialog();
+                    }
+                    catch
+                    {
+                        locateForm.SetControlText(dataGridView1.Rows[RowIndex].Cells[Table.TEXT].Value.ToString());
+                        locateForm.ShowDialog();
+                    }
+                }
             }
-        }
-
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if(RowIndex > -1 && ColIndex > -1)
-                dataGridView1.Rows[RowIndex].Cells[ColIndex].Value = "";
-        }
-
-        private void toolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            dataGridView1.Rows.Add(1);
         }
 
         private void dataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
@@ -295,88 +283,53 @@ namespace FreeTouch
             ColIndex = e.ColumnIndex;
         }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            string content = "";
-            for (int i = 0; i < ROWS; i++)
-            {
-                if (dataGridView1.Rows[i].Cells[0].Value.ToString().Trim().Length != 0)
-                {
-                    for (int j = 0; j < COLS; j++)
-                    {
-                        content += dataGridView1.Rows[i].Cells[j].Value.ToString() + "%";
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            if (!Directory.Exists(@"data\"))
-            {
-                Directory.CreateDirectory(@"data\");
-            }
-
-            if (FileManip.WriteFile(@"data\script.txt", content))
-            {
-                label1.ForeColor = Color.Green;
-                label1.Text = "已保存";
-            }
-            else
-            {
-                label1.ForeColor = Color.Red;
-                label1.Text = "保存失败";
-            }
-        }
-
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             label1.Text = "";
-            if(e.RowIndex > -1 && e.ColumnIndex == 5 || e.RowIndex > -1 && e.ColumnIndex == 8)
+            if (e.RowIndex > -1 && e.ColumnIndex == Table.TIME || e.RowIndex > -1 && e.ColumnIndex == Table.WAIT)
             {
-                if(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
+                if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
                 {
-                    if(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString().Trim().Length != 0)
+                    if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString().Trim().Length != 0)
                     {
                         double duration = 0;
                         try
                         {
                             duration = Convert.ToDouble(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString());
-                            if (e.ColumnIndex == 5)
+                            if (e.ColumnIndex == Table.TEXT)
                             {
                                 if ((int)duration < 1 || duration > 1000 * 60)
                                 {
-                                    MessageBox.Show("输入的数值范围无效！有效范围：1 - 60,000", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                    MessageBox.Show("数值范围无效！有效范围：1 - 60,000", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                     dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "";
                                 }
                             }
                             else
-                            if(e.ColumnIndex == 8)
+                            if (e.ColumnIndex == Table.WAIT)
                             {
                                 if (duration < 0 || duration > 60 * 60 * 12)
                                 {
-                                    MessageBox.Show("输入的数值范围无效！有效范围：0 - 43,200", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                    MessageBox.Show("数值范围无效！有效范围：0 - 43,200", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                     dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "";
                                 }
                             }
                         }
                         catch (FormatException)
                         {
-                            MessageBox.Show("输入的数值格式有误！", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            MessageBox.Show("数值格式有误！", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "";
                         }
                         catch (OverflowException)
                         {
-                            if (e.ColumnIndex == 5)
+                            if (e.ColumnIndex == Table.TIME)
                             {
-                                MessageBox.Show("输入的数值范围无效！有效范围：1 - 60,000", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                MessageBox.Show("数值范围无效！有效范围：1 - 60,000", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                 dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "";
                             }
                             else
-                            if (e.ColumnIndex == 8)
+                            if (e.ColumnIndex == Table.WAIT)
                             {
-                                MessageBox.Show("输入的数值范围无效！有效范围：0 - 43,200", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                MessageBox.Show("数值范围无效！有效范围：0 - 43,200", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                 dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "";
                             }
                         }
@@ -389,55 +342,10 @@ namespace FreeTouch
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            string content = FileManip.ReadFile(@"data\script.txt");
-            if (content == null || content.Length == 0)
-            {
-                MessageBox.Show("没有已保存的脚本", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            string cell = "";
-            button2_Click(sender, e);
-            int row = 0, col = 0;
-            for (int i = 0; i < content.Length; i++)
-            {
-                if(row > ROWS - 1)
-                {
-                    dataGridView1.Rows.Add(1);
-                }
-                cell += content[i];
-                if (content[i] == '%')
-                {
-                    if (content[i - 1] == '%')
-                    {
-                        dataGridView1.Rows[row].Cells[col].Value = "";
-                    }
-                    else
-                    {
-                        dataGridView1.Rows[row].Cells[col].Value = cell.Substring(0, cell.Length - 1);
-                    }
-                    cell = "";
-                    col++;
-                    if (col == COLS)
-                    {
-                        col = 0;
-                        row++;
-                    }
-                }
-            }
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            touch.IsRun = false;
-            touch.Close();
-        }
-
         private void dataGridView1_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
         {
             int with = 0;
-            for (int i = 0; i < COLS; i++)
+            for (int i = 0; i < Table.COLUMN_COUNT; i++)
             {
                 with += dataGridView1.Columns[i].Width;
             }
@@ -448,12 +356,58 @@ namespace FreeTouch
         private void dataGridView1_RowHeadersWidthChanged(object sender, EventArgs e)
         {
             int with = 0;
-            for (int i = 0; i < COLS; i++)
+            for (int i = 0; i < Table.COLUMN_COUNT; i++)
             {
                 with += dataGridView1.Columns[i].Width;
             }
             dataGridView1.Width = with + dataGridView1.RowHeadersWidth + 10;
             this.Width = dataGridView1.Width + 13;
+        }
+
+        private void dataGridView1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            int added = dataGridView1.Rows.Count - Table.ROW_COUNT;
+            int start = Table.ROW_COUNT;
+            int end = Table.ROW_COUNT + added;
+            if(dataGridView1.Rows.Count == Table.ROW_COUNT)
+            {
+                start = 0;
+                end = Table.ROW_COUNT;
+            }
+
+            for (int i = start; i < end; i++)
+            {
+                for (int j = 0; j < Table.COLUMN_COUNT; j++)
+                {
+                    dataGridView1.Rows[i].Cells[j].Value = "";
+                }
+                dataGridView1.Rows[i].Cells[Table.TIME].Value = "200";
+                dataGridView1.Rows[i].Cells[Table.COLUMN_COUNT - 1].Value = "0.5";
+                dataGridView1.Rows[i].HeaderCell.Value = (i + 1).ToString();
+            }
+            Table.ROW_COUNT = dataGridView1.Rows.Count;
+        }
+
+        private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            MessageBox.Show("内容有误，无法正确解析！", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            ClearDataGridView(dataGridView1);
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (RowIndex > -1 && ColIndex > -1)
+                dataGridView1.Rows[RowIndex].Cells[ColIndex].Value = "";
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            ClearDataGridView(dataGridView1);
+        }
+
+        private void ToolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            dataGridView1.Rows.Add(5);
         }
 
         private void textBox1_Leave(object sender, EventArgs e)
@@ -466,20 +420,20 @@ namespace FreeTouch
                     {
                         if (Convert.ToInt16(textBox1.Text.Trim()) < 1)
                         {
-                            MessageBox.Show("输入的重复次数不正确！", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            MessageBox.Show("重复次数不正确！", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             textBox1.Text = "";
                             return;
                         }
                     }
-                    catch(OverflowException)
+                    catch (OverflowException)
                     {
-                        MessageBox.Show("输入的重复次数过大！", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show("数值过大！", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         textBox1.Text = "";
                     }
                 }
                 else
                 {
-                    MessageBox.Show("输入的重复次数格式有误！应输入整数", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("重复次数格式有误！应输入整数", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     textBox1.Text = "";
                     return;
                 }
@@ -487,21 +441,6 @@ namespace FreeTouch
             else
             {
                 textBox1.Text = "";
-            }
-        }
-
-        private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            MessageBox.Show("脚本内容有误！", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            button2_Click(sender, e);
-        }
-
-        private void dataGridView1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-            if (isLoadFinished)
-            {
-                dataGridView1.Rows[ROWS].HeaderCell.Value = (ROWS + 1).ToString();
-                ROWS++;
             }
         }
     }
