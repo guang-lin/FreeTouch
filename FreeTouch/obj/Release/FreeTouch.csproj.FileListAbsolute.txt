@@ -10,3 +10,6 @@ D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\
 D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.exe
 D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.pdb
 D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.csprojAssemblyReference.cache
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\bin\Release\ICSharpCode.SharpZipLib.dll
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.MessageForm.resources
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Release\FreeTouch.csproj.CopyComplete

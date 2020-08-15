@@ -22,3 +22,4 @@ D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\
 D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Debug\FreeTouch.csprojAssemblyReference.cache
 D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\bin\Debug\ICSharpCode.SharpZipLib.dll
 D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Debug\FreeTouch.csproj.CopyComplete
+D:\Projects\Visual Studio 2017\source\repos\WindowsFormsApp\FreeTouch\FreeTouch\obj\Debug\FreeTouch.MessageForm.resources

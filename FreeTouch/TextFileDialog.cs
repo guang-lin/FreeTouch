@@ -4,18 +4,13 @@ using System.Windows.Forms;
 
 namespace FreeTouch
 {
-    class ScriptFileDialog
+    class TextFileDialog
     {
-        public string ReadScript()
+        public string ReadText(string directory)
         {
-            if (!Directory.Exists(@"data\"))
-            {
-                Directory.CreateDirectory(@"data\");
-            }
-
             using (OpenFileDialog fileDialog = new OpenFileDialog())
             {
-                fileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "data\\";
+                fileDialog.InitialDirectory = directory;
                 fileDialog.Filter = "*.txt|*.txt";
                 fileDialog.RestoreDirectory = true;
 
@@ -37,13 +32,13 @@ namespace FreeTouch
             return "";
         }
 
-        public void SaveScript(string content)
+        public void SaveText(string content, string directory, string name)
         {
             using (SaveFileDialog fileDialog = new SaveFileDialog())
             {
-                fileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "data\\";
+                fileDialog.InitialDirectory = directory;
                 fileDialog.Filter = "*.txt|*.txt";
-                fileDialog.FileName = "script.txt";
+                fileDialog.FileName = name;
                 fileDialog.RestoreDirectory = true;
 
                 if (fileDialog.ShowDialog() == DialogResult.OK)

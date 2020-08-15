@@ -70,29 +70,29 @@ namespace FreeTouch.Properties {
         }
         
         /// <summary>
-        ///   查找类似 这是一个基于 Android 调试桥实现的，可以辅助完成 的本地化字符串。
-        /// </summary>
-        internal static string CommentPart1 {
-            get {
-                return ResourceManager.GetString("CommentPart1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 安卓手机上特殊操作的程序 的本地化字符串。
-        /// </summary>
-        internal static string CommentPart2 {
-            get {
-                return ResourceManager.GetString("CommentPart2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 Copyright (C) 2020 Li Guanglin 的本地化字符串。
         /// </summary>
         internal static string Copyright {
             get {
                 return ResourceManager.GetString("Copyright", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 这是一个基于 Android 调试桥实现的，可以辅助 的本地化字符串。
+        /// </summary>
+        internal static string Description1 {
+            get {
+                return ResourceManager.GetString("Description1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 完成安卓手机上特殊操作的程序 的本地化字符串。
+        /// </summary>
+        internal static string Description2 {
+            get {
+                return ResourceManager.GetString("Description2", resourceCulture);
             }
         }
         

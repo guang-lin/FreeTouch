@@ -176,18 +176,21 @@ namespace FreeTouch
 
         private void button3_Click(object sender, EventArgs e) //关于
         {
-            string info = "  " + Properties.Resources.CommentPart1 + "\n  " + Properties.Resources.CommentPart2 + "\n\n  " +
-                Properties.Resources.Version + "\n  " +
-                Properties.Resources.Copyright;
-            MessageBox.Show(info, "关于", MessageBoxButtons.OK, MessageBoxIcon.None);
+            MessageForm messageForm = new MessageForm();
+            messageForm.StartPosition = FormStartPosition.CenterParent;
+            messageForm.ShowDialog();
         }
 
         private void button4_Click(object sender, EventArgs e) //读取脚本
         {
-            ScriptFileDialog fileDialog = new ScriptFileDialog();
+            TextFileDialog fileDialog = new TextFileDialog();
             Parse parse = new Parse();
-            string script = fileDialog.ReadScript();
-
+            string directory = AppDomain.CurrentDomain.BaseDirectory + "script";
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            string script = fileDialog.ReadText(directory);
             if (script.Length == 0)
             {
                 return;
@@ -199,16 +202,15 @@ namespace FreeTouch
 
         private void button5_Click(object sender, EventArgs e) //保存脚本
         {
-            ScriptFileDialog fileDialog = new ScriptFileDialog();
+            TextFileDialog fileDialog = new TextFileDialog();
             Parse parse = new Parse();
             string script = parse.ParseToScript(parse.GetArray(dataGridView1));
-
-            if (!Directory.Exists(@"data\"))
+            if (!Directory.Exists(@"script\"))
             {
-                Directory.CreateDirectory(@"data\");
+                Directory.CreateDirectory(@"script\");
             }
-
-            fileDialog.SaveScript(script);
+            string directory = AppDomain.CurrentDomain.BaseDirectory + "script";
+            fileDialog.SaveText(script, directory, "script.txt");
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -226,10 +228,12 @@ namespace FreeTouch
                         int x = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[Table.X1].Value);
                         int y = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[Table.Y1].Value);
                         pointForm.SetCurrentPoint(x, y);
+                        pointForm.StartPosition = FormStartPosition.CenterParent;
                         pointForm.ShowDialog();
                     }
                     catch
                     {
+                        pointForm.StartPosition = FormStartPosition.CenterParent;
                         pointForm.ShowDialog();
                     }
                 }
@@ -242,10 +246,12 @@ namespace FreeTouch
                         int x = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[Table.X2].Value);
                         int y = Convert.ToInt16(dataGridView1.Rows[RowIndex].Cells[Table.Y2].Value);
                         pointForm.SetCurrentPoint(x, y);
+                        pointForm.StartPosition = FormStartPosition.CenterParent;
                         pointForm.ShowDialog();
                     }
                     catch
                     {
+                        pointForm.StartPosition = FormStartPosition.CenterParent;
                         pointForm.ShowDialog();
                     }
                 }
@@ -266,11 +272,13 @@ namespace FreeTouch
                             }
                         }
                         locateForm.SetControlText(dataGridView1.Rows[RowIndex].Cells[Table.TEXT].Value.ToString());
+                        locateForm.StartPosition = FormStartPosition.CenterParent;
                         locateForm.ShowDialog();
                     }
                     catch
                     {
                         locateForm.SetControlText(dataGridView1.Rows[RowIndex].Cells[Table.TEXT].Value.ToString());
+                        locateForm.StartPosition = FormStartPosition.CenterParent;
                         locateForm.ShowDialog();
                     }
                 }
