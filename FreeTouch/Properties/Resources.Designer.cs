@@ -61,7 +61,7 @@ namespace FreeTouch.Properties {
         }
         
         /// <summary>
-        ///   查找类似 tools\platform-tools_r29.0.5-windows\platform-tools\adb.exe 的本地化字符串。
+        ///   查找类似 adb\adb.exe 的本地化字符串。
         /// </summary>
         internal static string AdbFile {
             get {
@@ -79,7 +79,7 @@ namespace FreeTouch.Properties {
         }
         
         /// <summary>
-        ///   查找类似 这是一个基于 Android 调试桥实现的，可以辅助 的本地化字符串。
+        ///   查找类似 该软件基于 Android 调试桥实现，可以用来 的本地化字符串。
         /// </summary>
         internal static string Description1 {
             get {
@@ -88,7 +88,7 @@ namespace FreeTouch.Properties {
         }
         
         /// <summary>
-        ///   查找类似 完成安卓手机上特殊操作的程序 的本地化字符串。
+        ///   查找类似 辅助完成安卓手机上的一些操作 的本地化字符串。
         /// </summary>
         internal static string Description2 {
             get {
@@ -97,20 +97,20 @@ namespace FreeTouch.Properties {
         }
         
         /// <summary>
-        ///   查找类似 tools\platform-tools_r29.0.5-windows.zip 的本地化字符串。
+        ///   查找类似 scripts 的本地化字符串。
         /// </summary>
-        internal static string PlatformToolsPackage {
+        internal static string ScriptsDirectory {
             get {
-                return ResourceManager.GetString("PlatformToolsPackage", resourceCulture);
+                return ResourceManager.GetString("ScriptsDirectory", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 tools 的本地化字符串。
+        ///   查找类似 temp 的本地化字符串。
         /// </summary>
-        internal static string ToolsDirectory {
+        internal static string TempDirectory {
             get {
-                return ResourceManager.GetString("ToolsDirectory", resourceCulture);
+                return ResourceManager.GetString("TempDirectory", resourceCulture);
             }
         }
         
@@ -124,7 +124,7 @@ namespace FreeTouch.Properties {
         }
         
         /// <summary>
-        ///   查找类似 tools\window_dump.xml 的本地化字符串。
+        ///   查找类似 temp\window_dump.xml 的本地化字符串。
         /// </summary>
         internal static string WindowDumpFile {
             get {

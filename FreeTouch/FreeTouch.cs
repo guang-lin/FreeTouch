@@ -230,42 +230,42 @@ namespace FreeTouch
 
         public Image GetScreenshot()
         {
-            if (File.Exists(Properties.Resources.ToolsDirectory + "\\compressed.png"))
+            if (File.Exists(Properties.Resources.TempDirectory + "\\compressed.png"))
             {
-                File.Delete(Properties.Resources.ToolsDirectory + "\\compressed.png");
+                File.Delete(Properties.Resources.TempDirectory + "\\compressed.png");
             }
             adb.Start();
             // 截屏
             adb.Execute("shell screencap -p /mnt/sdcard/screenshot.png", 50);
-            if (!Directory.Exists(Properties.Resources.ToolsDirectory + "\\"))
+            if (!Directory.Exists(Properties.Resources.TempDirectory + "\\"))
             {
-                Directory.CreateDirectory(Properties.Resources.ToolsDirectory + "\\");
+                Directory.CreateDirectory(Properties.Resources.TempDirectory + "\\");
             }
             int i = 0;
-            while (!File.Exists(Properties.Resources.ToolsDirectory + "\\screenshot.png"))
+            while (!File.Exists(Properties.Resources.TempDirectory + "\\screenshot.png"))
             {
-                if (i > 5)
+                if (i < 5)
                 {
-                    break;
+                    //将截图拉到电脑
+                    adb.Execute(@"pull /mnt/sdcard/screenshot.png " + Properties.Resources.TempDirectory, 200);
+                    i++;
                 }
                 else
                 {
-                    //将截图拉到电脑
-                    adb.Execute(@"pull /mnt/sdcard/screenshot.png " + Properties.Resources.ToolsDirectory, 50);
-                    i++;
+                    break;
                 }
             }
             adb.Execute("shell rm /mnt/sdcard/screenshot.png", 20);
-            if (File.Exists(Properties.Resources.ToolsDirectory + "\\screenshot.png"))
+            if (File.Exists(Properties.Resources.TempDirectory + "\\screenshot.png"))
             {
-                Compress.CompressImage(Properties.Resources.ToolsDirectory + "\\screenshot.png", Properties.Resources.ToolsDirectory + "\\compressed.png");
-                File.Delete(Properties.Resources.ToolsDirectory + "\\screenshot.png");
-                Image image = Image.FromFile(Properties.Resources.ToolsDirectory + "\\compressed.png");
+                Compress.CompressImage(Properties.Resources.TempDirectory + "\\screenshot.png", Properties.Resources.TempDirectory + "\\compressed.png");
+                File.Delete(Properties.Resources.TempDirectory + "\\screenshot.png");
+                Image image = Image.FromFile(Properties.Resources.TempDirectory + "\\compressed.png");
                 Image newImage = new Bitmap(image);
                 image.Dispose();
-                if (File.Exists(Properties.Resources.ToolsDirectory + "\\compressed.png"))
+                if (File.Exists(Properties.Resources.TempDirectory + "\\compressed.png"))
                 {
-                    File.Delete(Properties.Resources.ToolsDirectory + "\\compressed.png");
+                    File.Delete(Properties.Resources.TempDirectory + "\\compressed.png");
                 }
                 return newImage;
             }
@@ -298,21 +298,21 @@ namespace FreeTouch
         {
             adb.Start();
             adb.Execute("shell uiautomator dump /mnt/sdcard/window_dump.xml", 50);
-            if (!Directory.Exists(Properties.Resources.ToolsDirectory + "\\"))
+            if (!Directory.Exists(Properties.Resources.TempDirectory + "\\"))
             {
-                Directory.CreateDirectory(Properties.Resources.ToolsDirectory);
+                Directory.CreateDirectory(Properties.Resources.TempDirectory);
             }
             int k = 0;
             while (!File.Exists(Properties.Resources.WindowDumpFile))
             {
-                if (k > 5)
+                if (k < 5)
                 {
-                    break;
+                    adb.Execute(@"pull /mnt/sdcard/window_dump.xml " + Properties.Resources.TempDirectory + "\\", 100);
+                    k++;
                 }
                 else
                 {
-                    adb.Execute(@"pull /mnt/sdcard/window_dump.xml " + Properties.Resources.ToolsDirectory + "\\", 50);
-                    k++;
+                    break;
                 }
             }
             adb.Execute("shell rm /mnt/sdcard/window_dump.xml", 20);

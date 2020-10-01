@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AdbFile" xml:space="preserve">
-    <value>tools\platform-tools_r29.0.5-windows\platform-tools\adb.exe</value>
+    <value>adb\adb.exe</value>
     <comment>adb file</comment>
   </data>
   <data name="Copyright" xml:space="preserve">
@@ -126,27 +126,27 @@
     <comment>copyright</comment>
   </data>
   <data name="Description1" xml:space="preserve">
-    <value>这是一个基于 Android 调试桥实现的，可以辅助</value>
+    <value>该软件基于 Android 调试桥实现，可以用来</value>
     <comment>description1</comment>
   </data>
   <data name="Description2" xml:space="preserve">
-    <value>完成安卓手机上特殊操作的程序</value>
+    <value>辅助完成安卓手机上的一些操作</value>
     <comment>description2</comment>
   </data>
-  <data name="PlatformToolsPackage" xml:space="preserve">
-    <value>tools\platform-tools_r29.0.5-windows.zip</value>
-    <comment>platform tools package</comment>
+  <data name="ScriptsDirectory" xml:space="preserve">
+    <value>scripts</value>
+    <comment>scripts directory</comment>
   </data>
-  <data name="ToolsDirectory" xml:space="preserve">
-    <value>tools</value>
-    <comment>tools directory</comment>
+  <data name="TempDirectory" xml:space="preserve">
+    <value>temp</value>
+    <comment>temporary directory</comment>
   </data>
   <data name="Version" xml:space="preserve">
     <value>版本 1.6.2</value>
     <comment>version</comment>
   </data>
   <data name="WindowDumpFile" xml:space="preserve">
-    <value>tools\window_dump.xml</value>
+    <value>temp\window_dump.xml</value>
     <comment>window dump file</comment>
   </data>
 </root>

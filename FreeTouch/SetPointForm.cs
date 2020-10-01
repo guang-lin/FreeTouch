@@ -52,7 +52,6 @@ namespace FreeTouch
             {
                 form1.Cursor = Cursors.Default;
                 MessageBox.Show("未能正确连接手机！", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                form1.Close();
                 return;
             }
         }

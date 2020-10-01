@@ -34,18 +34,6 @@ namespace FreeTouch
             dataGridView1.Width = with + dataGridView1.RowHeadersWidth + 10;
             Width = dataGridView1.Width + 13;
             label1.Text = "";
-
-            if (!File.Exists(Properties.Resources.AdbFile))
-            {
-                if(File.Exists(Properties.Resources.PlatformToolsPackage))
-                {
-                    string package = Properties.Resources.PlatformToolsPackage;
-                    string toolsDirectory = Properties.Resources.ToolsDirectory;
-                    int startIndex = package.LastIndexOf('\\') + 1;
-                    Zip.Extract(package, toolsDirectory + "\\" + package.Substring(startIndex, package.LastIndexOf('.') - startIndex + 1));
-                    File.Delete(Properties.Resources.PlatformToolsPackage);
-                }
-            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -176,7 +164,7 @@ namespace FreeTouch
 
         private void button3_Click(object sender, EventArgs e) //关于
         {
-            MessageForm messageForm = new MessageForm();
+            AboutForm messageForm = new AboutForm();
             messageForm.StartPosition = FormStartPosition.CenterParent;
             messageForm.ShowDialog();
         }
@@ -185,7 +173,7 @@ namespace FreeTouch
         {
             TextFileDialog fileDialog = new TextFileDialog();
             Parse parse = new Parse();
-            string directory = AppDomain.CurrentDomain.BaseDirectory + "script";
+            string directory = AppDomain.CurrentDomain.BaseDirectory + Properties.Resources.ScriptsDirectory;
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
@@ -202,15 +190,22 @@ namespace FreeTouch
 
         private void button5_Click(object sender, EventArgs e) //保存脚本
         {
-            TextFileDialog fileDialog = new TextFileDialog();
-            Parse parse = new Parse();
-            string script = parse.ParseToScript(parse.GetArray(dataGridView1));
-            if (!Directory.Exists(@"script\"))
+            if (dataGridView1.Rows[0].Cells[0].Value.ToString().Trim().Length == 0)
             {
-                Directory.CreateDirectory(@"script\");
+                return;
             }
-            string directory = AppDomain.CurrentDomain.BaseDirectory + "script";
-            fileDialog.SaveText(script, directory, "script.txt");
+            else
+            {
+                TextFileDialog fileDialog = new TextFileDialog();
+                Parse parse = new Parse();
+                string script = parse.ParseToScript(parse.GetArray(dataGridView1));
+                if (!Directory.Exists(Properties.Resources.ScriptsDirectory))
+                {
+                    Directory.CreateDirectory(Properties.Resources.ScriptsDirectory);
+                }
+                string directory = AppDomain.CurrentDomain.BaseDirectory + Properties.Resources.ScriptsDirectory;
+                fileDialog.SaveText(script, directory, "");
+            }
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
