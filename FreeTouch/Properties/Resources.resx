@@ -126,11 +126,11 @@
     <comment>copyright</comment>
   </data>
   <data name="Description1" xml:space="preserve">
-    <value>该软件基于 Android 调试桥实现，可以用来</value>
+    <value>该软件可以用于辅助完成安卓手机上的一些</value>
     <comment>description1</comment>
   </data>
   <data name="Description2" xml:space="preserve">
-    <value>辅助完成安卓手机上的一些操作</value>
+    <value>操作</value>
     <comment>description2</comment>
   </data>
   <data name="ScriptsDirectory" xml:space="preserve">
