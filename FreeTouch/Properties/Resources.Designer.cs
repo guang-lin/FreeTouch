@@ -79,7 +79,7 @@ namespace FreeTouch.Properties {
         }
         
         /// <summary>
-        ///   查找类似 该软件可以用于辅助完成安卓手机上的一些 的本地化字符串。
+        ///   查找类似 该软件是基于 Android 调试桥实现的，可以 的本地化字符串。
         /// </summary>
         internal static string Description1 {
             get {
@@ -88,7 +88,7 @@ namespace FreeTouch.Properties {
         }
         
         /// <summary>
-        ///   查找类似 操作 的本地化字符串。
+        ///   查找类似 用于辅助完成安卓手机上的一些操作 的本地化字符串。
         /// </summary>
         internal static string Description2 {
             get {
