@@ -142,7 +142,7 @@
     <comment>temporary directory</comment>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>版本 1.6.2</value>
+    <value>版本 1.6.3</value>
     <comment>version</comment>
   </data>
   <data name="WindowDumpFile" xml:space="preserve">
