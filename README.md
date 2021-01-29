@@ -21,4 +21,4 @@
    (3)在正确连接手机的情况下，点击“运行”按钮，该手机将会执行返回操作。
    
    <img title="" src="./images/3.png" alt="">
-   ![](./images/3.png)
+![](./images/3.png)
