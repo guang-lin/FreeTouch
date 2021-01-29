@@ -1,0 +1,2 @@
+click(885, 1430) wait = 25
+key("BACK") wait = 3
